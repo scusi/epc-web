@@ -34,5 +34,7 @@ $ ./epc-simple -v 2 -e 1 -n "Sylvester Stallone" \
 ```
 
 Der obige befehl würde den folgenden QR-Code in die Datei `test-qr.png` schreiben.
+
 ![test-qr.png](/images/test-qr.png)
+
 
