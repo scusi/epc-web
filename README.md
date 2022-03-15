@@ -54,7 +54,7 @@ $ ./epc-simple -i "DE53200400600200400600" -n "Bündnis Entwicklung Hilft" \
 	| qrencode -l H -t PNG -o images/test-qr.png 
 ```
 
-Der obige befehl würde den folgenden QR-Code in die Datei `test-qr.png` schreiben.
+Der obige befehl würde den folgenden QR-Code in die Datei `images/test-qr.png` schreiben.
 
 ![test-qr.png](/images/test-qr.png)
 
