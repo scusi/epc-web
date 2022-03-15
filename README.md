@@ -32,28 +32,26 @@ go build ./cmd/epc-simple
 Mit dem folgenden beispiel Befehl unter linux kann man eine ECP Nachricht erzeugen.
 
 ```
-$ ./epc-simple -v 2 -e 1 -n "Sylvester Stallone" -s "Ein toller Test, für Döner" -a 23.42 -i DE56120400000012262200 -b COBADEFFXXX
+$ ./epc-simple -i "DE53200400600200400600" -n "Bündnis Entwicklung Hilft" -a 5 -s "ARD/ Nothilfe Ukraine" -b "COBADEFFXXX" 
 BCD
 002
 1
 SCT
 COBADEFFXXX
-Sylvester Stallone
-DE56120400000012262200
-EUR23.42
+Bündnis Entwicklung Hilft
+DE53200400600200400600
+EUR5
 
 
-Ein toller Test, für Döner
-
+ARD/ Nothilfe Ukraine
 ```
 
 Wenn man den obigen Befehl an `qrencode -l H -t ANSIUTF8` piped kann man einen EPC QR-Code erzeugen.
 
 ```
-$ ./epc-simple -v 2 -e 1 -n "Sylvester Stallone" \
-	-s "Ein toller Test, für Döner" -a 23.42 \
-	-i DE56120400000012262200 -b COBADEFFXXX \
-	| qrencode -l H -t PNG > test-qr.png
+$ ./epc-simple -i "DE53200400600200400600" -n "Bündnis Entwicklung Hilft" \
+	-a 5 -s "ARD/ Nothilfe Ukraine" -b "COBADEFFXXX" \
+	| qrencode -l H -t PNG -o images/test-qr.png 
 ```
 
 Der obige befehl würde den folgenden QR-Code in die Datei `test-qr.png` schreiben.
