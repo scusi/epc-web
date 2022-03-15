@@ -25,6 +25,7 @@ go build ./
 ```
 cd $GOSRC/gitlab.scusi.io/flow/epc
 go build ./cmd/epc-simple
+go build ./cmd/epc-parse
 ```
 
 ## Usage
