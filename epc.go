@@ -60,7 +60,18 @@ func (epc *EPC) String() (s string) {
 	return fmt.Sprintf("%s", b.Bytes())
 }
 
-func New(bic, name, iban, subject string, ammount float64) (e *EPC) {
+func New(name, iban, subject string, ammount float64) (e *EPC) {
+	e = new(EPC)
+	e.Version = V2
+	e.Encoding = UTF8
+	e.Name = name
+	e.IBAN = iban
+	e.Amount = ammount
+	e.SUBJECT = subject
+	return e
+}
+
+func NewWithBIC(bic, name, iban, subject string, ammount float64) (e *EPC) {
 	e = new(EPC)
 	e.Version = V2
 	e.Encoding = UTF8
@@ -70,8 +81,4 @@ func New(bic, name, iban, subject string, ammount float64) (e *EPC) {
 	e.Amount = ammount
 	e.SUBJECT = subject
 	return e
-}
-
-func (epc *EPC) SetVersion(version EPC_VERSION) {
-	epc.Version = version
 }
