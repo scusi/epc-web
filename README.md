@@ -30,6 +30,7 @@ go build ./cmd/epc-parse
 
 ## Usage
 
+### Text Format
 Mit dem folgenden beispiel Befehl unter linux kann man eine ECP Nachricht erzeugen.
 
 ```
@@ -60,6 +61,8 @@ Der obige befehl würde den folgenden QR-Code in die Datei `images/test-qr.png` 
 
 ![test-qr.png](/images/test-qr.png)
 
+### PNG Format
+
 `epc` kann auch selber QR-codes erzeugen, dazu muss man das format auf `png` setzten, etwa so:
 ```
 $ ./epc-simple -i "DE53200400600200400600" -n "Bündnis Entwicklung Hilft" \
@@ -69,4 +72,26 @@ $ ./epc-simple -i "DE53200400600200400600" -n "Bündnis Entwicklung Hilft" \
 Der erzeugte QR-Code findet sich dann in der Daei `images/test-qr2.png`.
 
 ![test-qr2.png](/images/test-qr2.png)
+
+### Parsing EPC Messages
+
+```
+$ ./epc-simple -i "DE53200400600200400600" -n "Bündnis Entwicklung Hilft" \
+        -a 5 -s "ARD/ Nothilfe Ukraine" -b "COBADEFFXXX" -format text > test.epc
+$ ./epc-parse -f test.epc
+BCD
+002
+1
+SCT
+COBADEFFXXX
+Bündnis Entwicklung Hilft
+DE53200400600200400600
+EUR5
+
+
+ARD/ Nothilfe Ukraine
+```
+
+The first command from the above example does create a new EPC Message, in Text format and pipes that to a file called `test.epc`
+The second command reads `test.epc` and parses the content into a EPC datastruct (`epc.EPC`), before writeing it to STDOUT.
 
