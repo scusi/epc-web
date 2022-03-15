@@ -26,7 +26,7 @@ func init() {
 
 func main() {
 	flag.Parse()
-	e := epc.New(
+	e := epc.NewWithBIC(
 		bic,
 		name,
 		iban,
