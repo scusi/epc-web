@@ -8,6 +8,19 @@ import (
 	"text/template"
 )
 
+var epctmpl = `{{define "EPC_Message"}}BCD
+{{printf "%03d" .Version}}
+{{.Encoding}}
+SCT
+{{.BIC}}
+{{.Name}}
+{{.IBAN}}
+EUR{{.Amount}}
+{{.SEPA_PURPOSE}}
+{{.SCR}}
+{{.SUBJECT}}
+{{.NOTE}}{{end}}`
+
 var t template.Template
 
 type EPC_VERSION int
@@ -44,7 +57,8 @@ type EPC struct {
 }
 
 func (epc *EPC) String() (s string) {
-	t, err := template.ParseFiles("EPC.tmpl")
+	//t, err := template.ParseFiles("EPC.tmpl")
+	t, err := template.New("epc").Parse(epctmpl)
 	if err != nil {
 		log.Printf("eEPC.String() error parsing template: %s", err.Error())
 		return s
