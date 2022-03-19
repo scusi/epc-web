@@ -2,10 +2,10 @@
 package main
 
 import (
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
-	"encoding/base64"
 	"gitlab.scusi.io/flow/epc"
 	"html"
 	"html/template"
@@ -25,6 +25,7 @@ func main() {
 	flag.Parse()
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", EpcForm)
+	router.HandleFunc("/qr", GetQR)
 	log.Fatal(http.ListenAndServe(listenAddr, router))
 }
 
@@ -32,6 +33,45 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "This is the Index, URL is: '%q'\n", html.EscapeString(r.URL.Path))
 }
 
+func GetQR(w http.ResponseWriter, r *http.Request) {
+	t, err := template.New("epcform").Parse(epcformtmpl)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	values := r.URL.Query()
+	for k, v := range values {
+		pageData[k] = v[0]
+		log.Printf("read parameter %s : %s", k, v)
+	}
+	amount := 0.0
+	if len(pageData["epcamount"]) > 0 {
+		amount, err = strconv.ParseFloat(pageData["epcamount"], 64)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	e := epc.New(
+		pageData["epcname"],
+		pageData["epciban"],
+		pageData["epcsubject"],
+		amount,
+	)
+	qr, err := e.MarshalQR()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	qrs := base64.StdEncoding.EncodeToString(qr)
+	pageData["qrs"] = qrs
+	err = t.ExecuteTemplate(w, "epcform", pageData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	return
+}
 
 func EpcForm(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("epcform").Parse(epcformtmpl)
@@ -42,9 +82,29 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		r.ParseForm()
-		for k, v := range r.Form {
-			pageData[k] = r.FormValue(v[0])
+		values := r.URL.Query()
+		for k, v := range values {
+			pageData[k] = v[0]
+			log.Printf("read parameter %s : %s", k, v)
 		}
+		amount, err := strconv.ParseFloat(pageData["epcamount"], 64)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		e := epc.New(
+			pageData["epcname"],
+			pageData["epciban"],
+			pageData["epcsubject"],
+			amount,
+		)
+		qr, err := e.MarshalQR()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		qrs := base64.StdEncoding.EncodeToString(qr)
+		pageData["qrs"] = qrs
 		err = t.ExecuteTemplate(w, "epcform", pageData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -53,23 +113,23 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 		return
 	case "POST":
 		r.ParseForm()
-		amount, err := strconv.ParseFloat(r.Form["epc-amount"][0], 64)
+		amount, err := strconv.ParseFloat(r.Form["epcamount"][0], 64)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		e := epc.New(
-			r.Form["epc-name"][0],
-			r.Form["epc-iban"][0],
-			r.Form["epc-subject"][0],
+			r.Form["epcname"][0],
+			r.Form["epciban"][0],
+			r.Form["epcsubject"][0],
 			amount,
 		)
 		qr, err := e.MarshalQR()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
-		}	
+		}
 		qrs := base64.StdEncoding.EncodeToString(qr)
 		pageData["qrs"] = qrs
 		log.Printf("qrs = %s", qrs)
@@ -79,7 +139,6 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		return
-		
 	}
 }
 
@@ -91,25 +150,25 @@ var epcformtmpl = `
 <fieldset>
 <legend>Überweisungsempfänger</legend>
 <div>
-  <label for="epc-name">Name Kontoinhaber</label>
-  <input name="epc-name" type="text" placeholder="Vorname Nachname" required autofocus>
+  <label for="epcname">Name Kontoinhaber</label>
+  <input name="epcname" type="text" placeholder="Vorname Nachname" value="{{.epcname}}" required autofocus>
 </div>
 
 <div>
-  <label for="epc-iban">IBAN</label>
-  <input name="epc-iban" type="text" placeholder="DE..." required>
+  <label for="epciban">IBAN</label>
+  <input name="epciban" type="text" placeholder="DE..." value="{{.epciban}}" required>
 </div>
 </fieldset>
 
 <fieldset>
 <legend>Überweisungsdetails</legend>
 <div>
-  <label for="epc-amount">Betrag</label>
-  <input name="epc-amount" type="text" placeholder="Betrag in EURO" required>
+  <label for="epcamount">Betrag</label>
+  <input name="epcamount" type="text" placeholder="Betrag in EURO" value="{{.epcamount}}" required>
 </div>
 <div>
-  <label for="epc-subject">Verwendungszweck</label>
-  <input name="epc-subject" type="text" placeholder="Verwendungszweck" required>
+  <label for="epcsubject">Verwendungszweck</label>
+  <input name="epcsubject" type="text" placeholder="Verwendungszweck" value="{{.epcsubject}}" required>
 </div>
 
 <input type="submit"> <input type="reset">
