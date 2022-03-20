@@ -11,6 +11,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 )
 
@@ -79,6 +80,12 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	// encode URL values
+	uv := url.Values{}
+	for k, v := range pageData {
+		uv.Add(k, v)
+	}
+	pageData["epcurl"] = uv.Encode()
 	switch r.Method {
 	case "GET":
 		r.ParseForm()
@@ -113,10 +120,13 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 		return
 	case "POST":
 		r.ParseForm()
-		amount, err := strconv.ParseFloat(r.Form["epcamount"][0], 64)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		amount := 0.0
+		if len(r.Form["epcamount"][0]) > 0 {
+			amount, err = strconv.ParseFloat(r.Form["epcamount"][0], 64)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
 		e := epc.New(
@@ -172,9 +182,17 @@ var epcformtmpl = `
 </div>
 
 <input type="submit"> <input type="reset">
+</fieldset>
 </form>
+&nbsp;
 
+<div>
 <img src="data:image/png;base64,{{.qrs}}" alt="QR-CODE" />
+</div>
+
+<div>
+URL: {{.epcurl}}
+</div>
 
 </body></html>
 {{end}}
