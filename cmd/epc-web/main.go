@@ -215,7 +215,7 @@ input[type=reset] {
   <div class="container"> <!-- start container -->
   <h1>EPC-QR-Code Generator</h1>
   <p>Mit Hilfe des folgenden Formulars kann ein EPC-QR-Code erstellt werden. EPC ist ein Standard um Bank-Überweisungen als QR-Code darzustellen. Diese QR-Codes kann man mit den meisten Online-Banking Apps scannen und spart sich so das lästige Eingeben der Überweisungsdetails.</p>
-<p>Der EPC069-12 Standard findet sich <a href="https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2018-05/EPC069-12%20v2.1%20Quick%20Response%20Code%20-%20Guidelines%20to%20Enable%20the%20Data%20Capture%20for%20the%20Initiation%20of%20a%20SCT.pdf">europeanpaymentcouncil.eu</a></p>
+<p>Der EPC069-12 Standard findet sich beim <a href="https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2018-05/EPC069-12%20v2.1%20Quick%20Response%20Code%20-%20Guidelines%20to%20Enable%20the%20Data%20Capture%20for%20the%20Initiation%20of%20a%20SCT.pdf">europeanpaymentcouncil.eu</a></p>
 <form action="/" method="GET">
 <fieldset>
 <legend>Überweisungsempfänger</legend>
