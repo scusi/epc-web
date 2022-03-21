@@ -1,4 +1,4 @@
-// skeleton for a API exposed on http
+// a simple webapp to generate EPC069-12 QR-Codes for bank transactions
 package main
 
 import (
@@ -9,14 +9,13 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	//"net/url"
 )
 
 var listenAddr string
 var pageData = make(map[string]string)
 
 func init() {
-	flag.StringVar(&listenAddr, "l", "127.0.0.1:9999", "address to listen on, default is: 127.0.0.1:9999")
+	flag.StringVar(&listenAddr, "l", ":80", "address to listen on, default is: :80")
 }
 
 func main() {
@@ -97,7 +96,6 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 		//pageData = urlparam2pD(r)
 		up := pD2URLparam(pageData)
 		pageData["epcurl"] = up
-		
 		e, err := pD2epc(pageData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
