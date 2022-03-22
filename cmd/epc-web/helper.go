@@ -14,7 +14,7 @@ func urlparam2pD(r *http.Request) (pageData map[string]string) {
 	values := r.URL.Query()
 	for k, v := range values {
 		pageData[k] = v[0]
-		log.Printf("read parameter %s : %s", k, v)
+		if debug { log.Printf("read parameter %s : %s", k, v)}
 	}
 	up := pD2URLparam(pageData)
 	pageData["epcurl"] = up
