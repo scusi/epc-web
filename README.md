@@ -95,3 +95,23 @@ ARD/ Nothilfe Ukraine
 The first command from the above example does create a new EPC Message, in Text format and pipes that to a file called `test.epc`
 The second command reads `test.epc` and parses the content into a EPC datastruct (`epc.EPC`), before writeing it to STDOUT.
 
+
+## epc-web example application
+
+There is an epc-web example application.
+
+### build epc-web docker container
+
+```
+docker build -t epc-web:latest ./
+```
+
+### run epc-web docker container
+
+```
+docker run --rm -p 8080:80 epc-web:latest
+```
+
+Afterwards you can point your webbrowser to: [http://127.0.0.1:8080](http://127.0.0.1:8080/) to use epc-web.
+
+
