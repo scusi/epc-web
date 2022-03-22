@@ -115,3 +115,4 @@ docker run --rm -p 8080:80 epc-web:latest
 Afterwards you can point your webbrowser to: [http://127.0.0.1:8080](http://127.0.0.1:8080/) to use epc-web.
 
 ![Screenshot_epc-web.png](/images/Screenshot_epc-web.png)
+![Screenshot_epc-web_02.png](/images/Screenshot_epc-web_02.png)
