@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	//"github.com/gorilla/mux"
-	"html"
+	//"html"
 	"html/template"
 	"log"
 	"net/http"
@@ -14,7 +14,7 @@ import (
 var (
 	branch = "dev"
 	version = "v0.0.0"
-	tag = "000000"
+	commit = "000000"
 	buildtime string
 )
 
@@ -30,18 +30,18 @@ func init() {
 func main() {
 	flag.Parse()
 	if debug {
-		log.Printf("Version: %s, Tag: %s, Branch: %s, Buildtime: %s", version, tag, branch, buildtime)
-		log.printf("listening on: %s", listenAddr)
+		log.Printf("Version: %s, Commit: %s, Branch: %s, Buildtime: %s", version, commit, branch, buildtime)
+		log.Printf("listening on: %s", listenAddr)
 	}
 	mux := http.NewServeMux()
-	mux.Handle("/version", LogRequest(http.HandlerFunc(ShowVersion)))
 	mux.Handle("/", LogRequest(http.HandlerFunc(EpcForm)))
+	mux.Handle("/version", LogRequest(http.HandlerFunc(Version)))
 	mux.Handle("/qr", LogRequest(http.HandlerFunc(GetQR)))
 	log.Fatal(http.ListenAndServe(listenAddr, mux))
 }
 
 func Version(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Version: %s, Tag: %s, Branch: %s, Buildtime: %s\n", version, tag, branch, buildtime)
+	fmt.Fprintf(w, "Version: %s, Commit: %s, Branch: %s, Buildtime: %s\n", version, commit, branch, buildtime)
 }
 
 func GetQR(w http.ResponseWriter, r *http.Request) {

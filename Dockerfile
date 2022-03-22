@@ -22,6 +22,15 @@ COPY . .
 #RUN go build ./cmd/HelloDocker
 RUN go build ./cmd/epc-web
 
+RUN GIT_COMMIT=$(git rev-list -1 HEAD) && \
+ VERSION=$(git describe --tags) && \
+ BUILDTIME=$(date -u '+%Y-%m-%dT%H:%M:%SZ') && \
+ BRANCH=$(git branch | grep \* | cut -d ' ' -f2) && \
+ go build -ldflags "-X main.commit=$GIT_COMMIT -X main.version=$VERSION -X main.branch=$BRANCH -main.buildtime=$BUILDTIME" ./cmd/epc-web
+
+
+
+
 # Let's create a /dist folder containing just the files necessary for runtime.
 # Later, it will be copied as the / (root) of the output image.
 WORKDIR /dist
