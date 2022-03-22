@@ -11,6 +11,13 @@ import (
 	"net/http"
 )
 
+var (
+	branch = "dev"
+	version = "v0.0.0"
+	tag = "000000"
+	buildtime string
+)
+
 var debug bool
 var listenAddr string
 var pageData = make(map[string]string)
@@ -22,26 +29,25 @@ func init() {
 
 func main() {
 	flag.Parse()
-	//router := mux.NewRouter().StrictSlash(true)
-	//router.HandleFunc("/", EpcForm)
-	//router.HandleFunc("/qr", GetQR)
-	//log.Fatal(http.ListenAndServe(listenAddr, router))
-
+	if debug {
+		log.Printf("Version: %s, Tag: %s, Branch: %s, Buildtime: %s", version, tag, branch, buildtime)
+		log.printf("listening on: %s", listenAddr)
+	}
 	mux := http.NewServeMux()
-	//mux.Handle("/version", LogRequest(http.HandlerFunc(ShowVersion)))
+	mux.Handle("/version", LogRequest(http.HandlerFunc(ShowVersion)))
 	mux.Handle("/", LogRequest(http.HandlerFunc(EpcForm)))
 	mux.Handle("/qr", LogRequest(http.HandlerFunc(GetQR)))
-	//return mux
 	log.Fatal(http.ListenAndServe(listenAddr, mux))
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "This is the Index, URL is: '%q'\n", html.EscapeString(r.URL.Path))
+func Version(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Version: %s, Tag: %s, Branch: %s, Buildtime: %s\n", version, tag, branch, buildtime)
 }
 
 func GetQR(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("showQR").Parse(showQR)
 	if err != nil {
+		log.Printf("Error parsing template: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -54,17 +60,20 @@ func GetQR(w http.ResponseWriter, r *http.Request) {
 	}
 	e, err := pD2epc(pageData)
 	if err != nil {
+		log.Printf("Error creating EPC from pageData: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	qrs, err := epc2b64QR(e)
 	if err != nil {
+		log.Printf("Error creating QR-Code from EPC data: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	pageData["qrs"] = qrs
 	err = t.ExecuteTemplate(w, "showQR", pageData)
 	if err != nil {
+		log.Printf("Error executing template: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -74,6 +83,7 @@ func GetQR(w http.ResponseWriter, r *http.Request) {
 func EpcForm(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("epcform").Parse(epcformtmpl)
 	if err != nil {
+		log.Printf("Error parsing template: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -88,12 +98,14 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 		}
 		qrs, err := epc2b64QR(e)
 		if err != nil {
+			log.Printf("Error creating EPC from pageData: %s", err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		pageData["qrs"] = qrs
 		err = t.ExecuteTemplate(w, "epcform", pageData)
 		if err != nil {
+			log.Printf("Error executing template: %s", err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -109,11 +121,13 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 		pageData["epcurl"] = up
 		e, err := pD2epc(pageData)
 		if err != nil {
+			log.Printf("Error creating EPC from pageData: %s", err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		qrs, err := epc2b64QR(e)
 		if err != nil {
+			log.Printf("Error creating QR-Code from EPC data: %s", err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -121,6 +135,7 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 		if debug { log.Printf("qrs = %s", qrs) }
 		err = t.ExecuteTemplate(w, "epcform", pageData)
 		if err != nil {
+			log.Printf("Error executing template: %s", err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
