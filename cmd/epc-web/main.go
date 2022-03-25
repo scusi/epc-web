@@ -114,6 +114,7 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		pageData["epcname"] = r.Form["epcname"][0]
 		pageData["epciban"] = r.Form["epciban"][0]
+		pageData["epcbic"] = r.Form["epcbic"][0]
 		pageData["epcsubject"] = r.Form["epcsubject"][0]
 		pageData["epcamount"] = r.Form["epcamount"][0]
 		//pageData = urlparam2pD(r)
@@ -417,7 +418,7 @@ input[type=reset] {
       <a href="/">Neuen QR-Code erstellen</a>
     </li>
     <li>
-      <a href="/?epcname={{.epcname}}&epciban={{.epciban}}&epcamount={{.epcamount}}&epcsubject={{.epcsubject}}">Überweisungsdaten ändern</a>
+      <a href="/?epcname={{.epcname}}&epcbic={{.epcbic}}&epciban={{.epciban}}&epcamount={{.epcamount}}&epcsubject={{.epcsubject}}">Überweisungsdaten ändern</a>
     </li>
   </ul>
 <div class="row">
@@ -429,7 +430,7 @@ input[type=reset] {
 		<pre class="details">
 Empfänger:        {{.epcname}}
 IBAN:	          {{.epciban}}
-{{if .epcbic}}
+{{if .epcbic -}}
 BIC:		  {{.epcbic}}
 {{end}}
 Betrag:           {{.epcamount}} Euro
