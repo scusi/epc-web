@@ -12,9 +12,9 @@ import (
 )
 
 var (
-	branch = "dev"
-	version = "v0.0.0"
-	commit = "000000"
+	branch    = "dev"
+	version   = "v0.0.0"
+	commit    = "000000"
 	buildtime string
 )
 
@@ -90,19 +90,21 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		//r.ParseForm()
-		pageData = urlparam2pD(r)
-		e, err := pD2epc(pageData)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		if len(r.URL.Query()) > 0 {
+			pageData = urlparam2pD(r)
+			e, err := pD2epc(pageData)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			qrs, err := epc2b64QR(e)
+			if err != nil {
+				log.Printf("Error creating EPC from pageData: %s", err.Error())
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			pageData["qrs"] = qrs
 		}
-		qrs, err := epc2b64QR(e)
-		if err != nil {
-			log.Printf("Error creating EPC from pageData: %s", err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		pageData["qrs"] = qrs
 		err = t.ExecuteTemplate(w, "epcform", pageData)
 		if err != nil {
 			log.Printf("Error executing template: %s", err.Error())
@@ -133,7 +135,9 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		pageData["qrs"] = qrs
-		if debug { log.Printf("qrs = %s", qrs) }
+		if debug {
+			log.Printf("qrs = %s", qrs)
+		}
 		err = t.ExecuteTemplate(w, "epcform", pageData)
 		if err != nil {
 			log.Printf("Error executing template: %s", err.Error())
