@@ -26,7 +26,7 @@ RUN GIT_COMMIT=$(git rev-list -1 HEAD) && \
  VERSION=$(git describe --tags) && \
  BUILDTIME=$(date -u '+%Y-%m-%dT%H:%M:%SZ') && \
  BRANCH=$(git branch | grep \* | cut -d ' ' -f2) && \
- go build -ldflags "-X main.commit=$GIT_COMMIT -X main.version=$VERSION -X main.branch=$BRANCH -X main.buildtime=$BUILDTIME" ./cmd/epc-web
+ go build -ldflags "-s -w -X main.commit=$GIT_COMMIT -X main.version=$VERSION -X main.branch=$BRANCH -X main.buildtime=$BUILDTIME" ./cmd/epc-web
 
 
 
