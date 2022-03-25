@@ -235,8 +235,19 @@ input[type=reset] {
   </div>
   <div class="col-75">
   <input name="epciban" type="text" placeholder="DE..." value="{{.epciban}}" required>
-  <p class="help-text" id="epcNameHelpText">
+  <p class="help-text" id="epcIBANHelpText">
 	Eine gültige IBAN, 34 Stellen lang.
+  </p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-25">
+  	<label for="epcbic">BIC</label>
+  </div>
+  <div class="col-75">
+  <input name="epcbic" type="text" placeholder="BIC" value="{{.epcbic}}">
+  <p class="help-text" id="epcBICHelpText">
+	Eine gültige BIC. Optional, kann bei Inlandüberweisung weggelassen werden.
   </p>
   </div>
 </div>
@@ -277,6 +288,9 @@ input[type=reset] {
 		<pre>
 Empfänger:        {{.epcname}}
 IBAN:	          {{.epciban}}
+{{if .epcbic}}
+BIC:		  {{.epcbic}}
+{{end}}
 Betrag:           {{.epcamount}} Euro
 Verwendungszweck: {{.epcsubject}}
 		</pre>
