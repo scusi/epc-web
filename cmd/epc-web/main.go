@@ -4,8 +4,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	//"github.com/gorilla/mux"
-	//"html"
 	"html/template"
 	"log"
 	"net/http"
@@ -21,10 +19,31 @@ var (
 var debug bool
 var listenAddr string
 var pageData = make(map[string]string)
+var t *template.Template
+var err error
 
 func init() {
 	flag.StringVar(&listenAddr, "l", ":80", "address to listen on, default is: :80")
 	flag.BoolVar(&debug, "debug", false, "logs debug info when set true")
+}
+
+func initTemplate() (t *template.Template, err error) {
+	t, err = template.New("css").Parse(stylesheet)
+	if err != nil {
+		log.Printf("Error parsing stylesheet template: %s", err.Error())
+		return
+	}
+	t, err = t.New("showQR").Parse(showQR)
+	if err != nil {
+		log.Printf("Error parsing showQR template: %s", err.Error())
+		return
+	}
+	t, err = t.New("epcform").Parse(epcformtmpl)
+	if err != nil {
+		log.Printf("Error parsing EPCForm template: %s", err.Error())
+		return
+	}
+	return
 }
 
 func main() {
@@ -45,7 +64,7 @@ func Version(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetQR(w http.ResponseWriter, r *http.Request) {
-	t, err := template.New("showQR").Parse(showQR)
+	t, err = initTemplate()
 	if err != nil {
 		log.Printf("Error parsing template: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,7 +100,7 @@ func GetQR(w http.ResponseWriter, r *http.Request) {
 }
 
 func EpcForm(w http.ResponseWriter, r *http.Request) {
-	t, err := template.New("epcform").Parse(epcformtmpl)
+	t, err = initTemplate()
 	if err != nil {
 		log.Printf("Error parsing template: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -148,21 +167,16 @@ func EpcForm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var epcformtmpl = `
-{{define "epcform"}}
-<html>
-  <head>
-    <title>EPC QR-Code Generator</title>
-    <style>
-    /* Style inputs, select elements and textareas */
-	input[type=text], select, textarea{
-  		width: 100%;
-  		padding: 12px;
-  		border: 1px solid #ccc;
-  		border-radius: 4px;
-  		box-sizing: border-box;
-  		resize: vertical;
-	}
+var stylesheet = `{{define "css"}}
+/* Style inputs, select elements and textareas */
+input[type=text], select, textarea{
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
 
 /* Style the label to display next to the inputs */
 label {
@@ -171,12 +185,16 @@ label {
 }
 
 legend {
-	font-size: large;
-	margin-top: 25px;
+  font-size: large;
+  margin-top: 25px;
+}
+
+pre.details {
+	font-size: x-large;
 }
 
 .help-text {
-	font-size: x-small;
+  font-size: x-small;
 }
 
 /* Style the submit button */
@@ -238,6 +256,15 @@ input[type=reset] {
     margin-top: 0;
   }
 } 
+{{end}}`
+
+var epcformtmpl = `
+{{define "epcform"}}
+<html>
+  <head>
+    <title>EPC QR-Code Generator</title>
+    <style>
+    {{template "css"}}
     </style>
   </head>
   <body>
@@ -324,94 +351,7 @@ var showQR = `{{define "showQR"}}
   <head>
     <title>EPC QR-Code Generator</title>
     <style>
-    /* Style inputs, select elements and textareas */
-	input[type=text], select, textarea{
-  		width: 100%;
-  		padding: 12px;
-  		border: 1px solid #ccc;
-  		border-radius: 4px;
-  		box-sizing: border-box;
-  		resize: vertical;
-	}
-
-/* Style the label to display next to the inputs */
-label {
-  padding: 12px 12px 12px 0;
-  display: inline-block;
-}
-
-legend {
-	font-size: large;
-	margin-top: 25px;
-}
-
-pre.details {
-	font-size: x-large;
-}
-
-.help-text {
-	font-size: x-small;
-}
-
-/* Style the submit button */
-input[type=submit] {
-  background-color: #04AA6D;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  float: left;
-  margin-top: 20px;
-}
-
-/* Style the reset button */
-input[type=reset] {
-  background-color: #FF0000;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  float: right;
-  margin-top: 20px;
-}
-
-/* Style the container */
-.container {
-  border-radius: 5px;
-  background-color: #f2f2f2;
-  padding: 20px;
-}
-
-/* Floating column for labels: 25% width */
-.col-25 {
-  float: left;
-  width: 25%;
-  margin-top: 6px;
-}
-
-/* Floating column for inputs: 75% width */
-.col-75 {
-  float: left;
-  width: 75%;
-  margin-top: 6px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-  .col-25, .col-75, input[type=submit] {
-    width: 100%;
-    margin-top: 0;
-  }
-} 
+    {{template "css"}}
     </style>
   </head>
   <body>
