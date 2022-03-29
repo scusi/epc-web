@@ -1,8 +1,8 @@
 package epc
 
 import (
-	"github.com/skip2/go-qrcode"
 	"fmt"
+	"github.com/skip2/go-qrcode"
 )
 
 // (epc *EPC) MarshalQR() - returns EPC as QR-code in PNG format

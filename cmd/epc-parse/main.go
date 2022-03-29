@@ -1,10 +1,10 @@
 package main
 
 import (
-	"gitlab.scusi.io/flow/epc"
 	"flag"
-	"log"
 	"fmt"
+	"gitlab.scusi.io/flow/epc"
+	"log"
 )
 
 var (
