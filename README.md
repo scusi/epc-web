@@ -20,7 +20,7 @@ docker build -t epc-web:mybuild ./
 docker run --rm -p 8080:80 epc-web:mybuild
 ```
 
-Afterwards you can point your webbrowser to: [http://127.0.0.1:8080](http://127.0.0.1:8080/) to use epc-web.
+Afterwards you can point your webbrowser to: `http://127.0.0.1:8080` to use epc-web.
 
 ![Screenshot_epc-web.png](/images/Screenshot_epc-web.png)
 ![Screenshot_epc-web_02.png](/images/Screenshot_epc-web_02.png)
@@ -39,7 +39,7 @@ cd epc-web/
 go run ./ -l :9999
 ```
 
-After executing the above command point your browser to: [https://127.0.0.1:9999/](https://127.0.0.1:9999/).
+After executing the above command point your browser to: `https://127.0.0.1:9999/`.
 
 
 ## Links
