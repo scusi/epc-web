@@ -80,7 +80,7 @@ func pD2epc(pageData map[string]string) (e *epc.EPC, err error) {
 			err = fmt.Errorf("BIC is invalid")
 			return
 		}
-		e = epc.NewWithBIC(
+		e, err = epc.NewWithBIC(
 			pageData["epcbic"],
 			pageData["epcname"],
 			pageData["epciban"],
@@ -88,7 +88,7 @@ func pD2epc(pageData map[string]string) (e *epc.EPC, err error) {
 			amount,
 		)
 	} else {
-		e = epc.New(
+		e, err = epc.New(
 			pageData["epcname"],
 			pageData["epciban"],
 			pageData["epcsubject"],
