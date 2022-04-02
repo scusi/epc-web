@@ -1,3 +1,4 @@
+github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/scusi/epc v0.0.11 h1:LCzLZNxHG9Wp6zFRooyulrfp3RZ2m3yNMCJTT2w6nRw=
 github.com/scusi/epc v0.0.11/go.mod h1:8e+97gqx2EqyIlX6Sx+fXrBHjIXVMt5LI1O5pY1ZqBY=
 github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e h1:MRM5ITcdelLK2j1vwZ3Je0FKVCfqOLp5zO6trqMLYs0=
