@@ -6,9 +6,16 @@ This way the user does not need to type all the bank transaction details, but ca
 
 ## Docker
 
-Docker is the prefered way to use the web-app. The following sections describe how to create a docker image and how to run it.
+Docker is the prefered way to use the web-app. You can use the official latest version of the Docker container like this:
+
+```bash
+docker run --rm -p 8080:80 ghcr.io/scusi/epc-web:latest
+```
+
 
 ### build a docker image
+
+The following sections describe how to create a docker image and how to run it.
 
 ```
 docker build -t epc-web:mybuild ./
