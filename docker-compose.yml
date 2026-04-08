@@ -1,10 +1,8 @@
-version: "3"
-
 # docker-compose file for epc-web running behind a traefik reverse proxy
 
 services:
   web:
-    image: 'epc-web:latest'
+    image: 'ghcr.io/scusi/epc-web:latest' 
     restart: always
     hostname: 'epc.scusi.io'
     ports:
